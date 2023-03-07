@@ -54,10 +54,22 @@ kubectl -n pipelines-as-code create secret generic pipelines-as-code-secret \
 ```bash
 kubectl delete ns pac-demo
 kubectl create ns pac-demo
-kubectl delete secret/github-ch007m -n pac-demo
-kubectl -n pac-demo create secret generic github-ch007m \
-        --from-literal webhook.secret="$GITHUBAPP_WEBHOOK_SECRET" \
-        --from-literal github.token=$GITHUB_TOKEN
+kubectl delete secret/ch007m-pac-demo -n pac-demo
+#kubectl -n pac-demo create secret generic ch007m-pac-demo \
+#        --from-literal webhook.secret="$GITHUBAPP_WEBHOOK_SECRET" \
+#        --from-literal github.token=$GITHUB_TOKEN
+
+cat <EOF | kubectl apply -f -
+apiVersion: v1
+data:
+  provider.token: Z2hwXzRTeTZzOVNCNkg0bWhsTDV2WWM4alJ1ZXNHeGNpdTFiTVpBNw==
+  webhook.secret: ODE5YzdkZjNiZTVjZDMxMmVjMDVjYTg0ODRmZWQzNDNiMzE2MGFjMA==
+kind: Secret
+metadata:
+  name: ch007m-pac-demo
+  namespace: pac-demo
+type: Opaque
+EOF
 
 kubectl delete repositories.pipelinesascode.tekton.dev/ch007m-pac-demo -n pac-demo
 cat <<EOF | kubectl apply -f -
@@ -69,13 +81,12 @@ metadata:
 spec:
   git_provider:
     secret:
-      key: github.token
-      name: github-ch007m
+      key: provider.token
+      name: ch007m-pac-demo
     webhook_secret:
       key: webhook.secret
-      name: github-ch007m
-  url: https://github.com/ch007m/pac-demo
-EOF        
+      name: ch007m-pac-demo
+  url: https://github.com/ch007m/pac-demo       
 ```
 - Git clone the demo project
 ```bash
