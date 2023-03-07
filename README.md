@@ -1,6 +1,6 @@
 # Pipeline as a code demo
 
-This project has been created to play and demo Pipeline as a Code on a k8s cluster
+This project has been created to play and demo Pipeline as a Code on a k8s cluster.
 
 ## How to guide
 
