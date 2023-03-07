@@ -12,6 +12,9 @@ curl -s -L "https://raw.githubusercontent.com/snowdrop/k8s-infra/main/kind/kind-
 kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 kubectl apply -f https://raw.githubusercontent.com/openshift-pipelines/pipelines-as-code/stable/release.k8s.yaml
 
+kubectl rollout status deployment/ingress-nginx-controller -n ingress
+kubectl rollout status deployment/pipelines-as-code-controller -n pipelines-as-code
+
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -36,8 +39,8 @@ spec:
 EOF
 ```
 
-- Create a Github App
-- Create a SMEE URL `https://smee.io/webhook.192.168.1.90.nip.io` `& Deployment
+- Create a Github App as described [hereafter](https://pipelinesascode.com/docs/install/github_apps/)
+- Create a SMEE URL `https://smee.io/webhook.192.168.1.90.nip.io` & install it as a `Deployment`
 ```bash
 SMEE_URL=https://smee.io/webhook.${VM_IP}.nip.io
 kubectl delete deployment/gosmee-client
@@ -66,7 +69,7 @@ spec:
       restartPolicy: Always
 EOF
 ```
-- Creating the secret needed by the controller
+- Create now the secret used by the controller to interact with the GithubApp
 ```bash
 GITHUBAPP_PRIVATE_KEY=$(PASSWORD_STORE_DIR=~/.password-store-work pass show github/apps/my-pipeline-as-code/private_key)
 GITHUBAPP_ID=$(PASSWORD_STORE_DIR=~/.password-store-work pass show github/apps/my-pipeline-as-code/app_id | awk 'NR==1{print $1}')
@@ -78,7 +81,7 @@ kubectl -n pipelines-as-code create secret generic pipelines-as-code-secret \
         --from-literal github-application-id="$GITHUBAPP_ID" \
         --from-literal webhook.secret="$GITHUBAPP_WEBHOOK_SECRET"
 ```
-- Create the demo namespace, secret and repository
+- Create the demo namespace, secret and the Pac repository
 ```bash
 kubectl delete ns pac-demo
 kubectl create ns pac-demo
@@ -105,7 +108,7 @@ spec:
       key: webhook.secret
       name: ch007m-pac-demo
   url: https://github.com/ch007m/pac-demo
-EOF         
+EOF
 ```
 - Git clone the demo project
 ```bash
