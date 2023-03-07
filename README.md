@@ -1,6 +1,6 @@
-# pac-demo
+# Pipeline as a code demo
 
-a badly written hello world!
+This project has been created to play and demo Pipeline as a Code on a k8s cluster
 
 ## How to guide
 
@@ -111,6 +111,9 @@ EOF
 ```bash
 rm -rf pac-demo
 git clone https://github.com/ch007m/pac-demo ; cd pac-demo
+```
+- Create a Pull Request
+```bash
 git checkout main
 git push -d origin tektonci
 git branch -d tektonci
@@ -122,4 +125,33 @@ wget https://raw.githubusercontent.com/ch007m/pac-demo/main/.tekton/pipelinerun.
 git add .tekton
 git commit -asm "My first PAC"
 git push --set-upstream origin tektonci
+```
+- Next merge the PR
+- Track the log of the build
+```bash
+tkn pr logs -n pac-demo pac-demo-vfm9z
+```
+
+## Fix your code and repush
+
+- edit main.go and change it to :
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	fmt.Fprint(os.Stdout, "Hello world\n")
+}
+```
+
+- commit and push the change:
+
+```
+git commit -a -m "Fix linter errors"
+git push
 ```
