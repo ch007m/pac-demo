@@ -119,11 +119,11 @@ git clone https://github.com/ch007m/pac-demo ; cd pac-demo
 ```bash
 git checkout main
 git push -d origin tektonci
-git branch -d tektonci
+git branch -D tektonci
 git checkout -b tektonci
 
 mkdir -p .tekton
-wget https://raw.githubusercontent.com/ch007m/pac-demo/main/.tekton/pipelinerun.yaml -O k8s/pipelinerun.yaml
+wget https://raw.githubusercontent.com/ch007m/pac-demo/main/k8s/pipelinerun.yaml -O .tekton/pipelinerun.yaml
 
 git add .tekton
 git commit -asm "My first PAC"
