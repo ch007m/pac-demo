@@ -111,7 +111,8 @@ EOF
 ```bash
 rm -rf pac-demo
 git clone https://github.com/ch007m/pac-demo ; cd pac-demo
-git branch -D tektonci
+git push -d origin tektonci
+git branch -d tektonci
 git checkout -b tektonci
 
 rm -rf .tekton ; mkdir -p .tekton
