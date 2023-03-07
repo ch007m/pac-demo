@@ -38,7 +38,29 @@ spec:
         pathType: Prefix
 EOF
 ```
-
+- Optionally, install the Tekton dashboard
+```bash
+kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml
+DASHBOARD_URL=dashboard.${VM_IP}.nip.io
+kubectl apply -n tekton-pipelines -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+spec:
+  rules:
+  - host: $DASHBOARD_URL
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        backend:
+          service:
+            name: tekton-dashboard
+            port:
+              number: 9097
+EOF
+```
 - Create a Github App as described [hereafter](https://pipelinesascode.com/docs/install/github_apps/)
 - Create a SMEE URL `https://smee.io/webhook.192.168.1.90.nip.io` & install it as a `Deployment`
 ```bash
