@@ -132,12 +132,12 @@ git push --set-upstream origin tektonci
 - Next merge the PR
 - Track the log of the build
 ```bash
-tkn pr logs -n pac-demo pac-demo-vfm9z
+PIPELINE_NAME=$(k get pipelinerun -n pac-demo -ojson | jq -r '.items[0].metadata.name')
+tkn pr logs -n pac-demo $PIPELINE_NAME
 ```
 
-## Fix your code and repush
-
-- edit main.go and change it to :
+- Fix your code and repush
+- Edit main.go and change it to :
 
 ```go
 package main
@@ -151,10 +151,14 @@ func main() {
 	fmt.Fprint(os.Stdout, "Hello world\n")
 }
 ```
+- Commit and push the change:
 
-- commit and push the change:
-
-```
+```bash
 git commit -a -m "Fix linter errors"
 git push
+```
+- Check again the log of the pipeline
+```bash
+PIPELINE_NAME=$(k get pipelinerun -n pac-demo -ojson | jq -r '.items[0].metadata.name')
+tkn pr logs -n pac-demo $PIPELINE_NAME
 ```
